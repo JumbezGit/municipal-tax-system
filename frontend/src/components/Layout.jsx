@@ -30,7 +30,7 @@ const Layout = ({ children }) => {
           className={`offcanvas offcanvas-start ${isSideNavOpen ? 'show' : ''}`} 
           tabIndex="-1" 
           id="sideNavOffcanvas"
-          style={{ visibility: isSideNavOpen ? 'visible' : 'hidden' }}
+          style={{ visibility: isSideNavOpen ? 'visible' : 'hidden', width: '250px', boxShadow: 'none', overflow: 'hidden' }}
         >
           <div className="offcanvas-header">
             <h5 className="offcanvas-title">Menu</h5>

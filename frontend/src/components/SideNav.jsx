@@ -20,9 +20,9 @@ const SideNav = ({ closeSideNav }) => {
   }
 
   return (
-    <div className="d-flex flex-column bg-white border-end" style={{ width: '250px', minHeight: '100vh' }}>
+    <div className="d-flex flex-column bg-white border-end " style={{ width: '250px', minHeight: '100%', maxHeight: '100%' }}>
       {/* Header */}
-      <div className="my-3 text-center">
+      <div className="my-2 text-center">
        <i className="fas fa-user me-2 fs-2"></i><br/>
         <small className="text-muted">{user?.full_name || user?.email}</small>
         <br/>
@@ -30,23 +30,45 @@ const SideNav = ({ closeSideNav }) => {
       </div><hr className="my-0" />
       
       {/* Menu */}
-      <div className=" my-3 ">
+      <div className="  ">
         {isAdmin ? (
+          <>
           <Link 
             to="/admin" 
-            className={`d-flex align-items-center px-3 py-2 text-decoration-none ${isActive('/admin') ? 'bg-primary text-white' : 'text-dark'}`}
+            className={`d-flex align-items-center px-3 py-2 text-decoration-none ${isActive('/admin') ? 'bg-secondary text-white' : 'text-dark'}`}
             onClick={handleNavClick}
           >
             <i className="fas fa-chart-line me-3"></i>
             Dashboard
           </Link>
+           <Link 
+            to="/users" 
+            className={`d-flex align-items-center px-3 py-2 text-decoration-none ${isActive('/users') ? 'bg-secondary text-white' : 'text-dark'}`}
+            onClick={handleNavClick}
+          >
+            <i className="fas fa-users me-3"></i>
+            User Management
+          </Link>
+          
+           <Link 
+            to="/unpaid" 
+            className={`d-flex align-items-center px-3 py-2 text-decoration-none ${isActive('/unpaid') ? 'bg-secondary text-white' : 'text-dark'}`}
+             onClick={() => setActiveTab('unpaid')}
+          >
+            <i className="fas fa-money-bill me-3"></i>
+            Payments
+          </Link>
+          
+          </>
+
+          
           
           
         ) : (
           <>
             <Link 
-              to="/summary" 
-              className={`d-flex align-items-center px-3 py-2 text-decoration-none ${isActive('/summary') ? 'bg-primary text-white' : 'text-dark'}`}
+              to="/dashboard" 
+              className={`d-flex align-items-center px-3 py-2 text-decoration-none ${isActive('/dashboard') ? 'bg-secondary text-white' : 'text-dark'}`}
               onClick={handleNavClick}
             >
               <i className="fas fa-chart-bar me-3"></i>
@@ -54,15 +76,15 @@ const SideNav = ({ closeSideNav }) => {
             </Link>
             <Link 
               to="/profile" 
-              className={`d-flex align-items-center px-3 py-2 text-decoration-none ${isActive('/profile') ? 'bg-primary text-white' : 'text-dark'}`}
+              className={`d-flex align-items-center px-3 py-2 text-decoration-none ${isActive('/profile') ? 'bg-secondary text-white' : 'text-dark'}`}
               onClick={handleNavClick}
             >
               <i className="fas fa-user me-3"></i>
-              My Profile
+              Profile
             </Link>
             <Link 
               to="/payment" 
-              className={`d-flex align-items-center px-3 py-2 text-decoration-none ${isActive('/payment') ? 'bg-primary text-white' : 'text-dark'}`}
+              className={`d-flex align-items-center px-3 py-2 text-decoration-none ${isActive('/payment') ? 'bg-secondary text-white' : 'text-dark'}`}
               onClick={handleNavClick}
             >
               <i className="fas fa-credit-card me-3"></i>
