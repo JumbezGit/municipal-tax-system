@@ -38,9 +38,10 @@ class TaxpayerProfileAdmin(admin.ModelAdmin):
 
 @admin.register(TaxType)
 class TaxTypeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'is_active']
+    list_display = ['name', 'default_amount', 'is_active']
     list_filter = ['is_active']
     search_fields = ['name']
+    fields = ['name', 'description', 'default_amount', 'is_active']
 
 
 @admin.register(TaxAccount)

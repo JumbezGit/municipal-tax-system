@@ -112,6 +112,12 @@ class TaxType(models.Model):
     
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True)
+    default_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+        help_text='Default annual tax due amount automatically assigned when a new tax account is created'
+    )
     is_active = models.BooleanField(default=True)
     
     def __str__(self):
@@ -158,9 +164,11 @@ class PaymentRequest(models.Model):
     
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
         ('Processing', 'Processing'),
         ('Completed', 'Completed'),
         ('Failed', 'Failed'),
+        ('Rejected', 'Rejected'),
         ('Cancelled', 'Cancelled'),
     ]
     
@@ -181,6 +189,11 @@ class PaymentRequest(models.Model):
     # Reference numbers
     control_number = models.CharField(max_length=50, blank=True, unique=True, null=True)
     provider_reference = models.CharField(max_length=100, blank=True)
+    
+    # Approval fields (for admin approval workflow)
+    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='approved_payments')
+    approved_at = models.DateTimeField(null=True, blank=True)
+    rejection_reason = models.TextField(blank=True)
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)

@@ -80,7 +80,7 @@ DATABASES = {
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': 'municipal_tax',
 #         'USER': 'postgres',
-#         'PASSWORD': 'password',
+#         'PASSWORD': '12345',
 #         'HOST': 'localhost',
 #         'PORT': '5432',
 #     }

@@ -6,7 +6,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     RegisterView, LoginView, RefreshTokenView, MeView, ProfileView,
     DashboardSummaryView, PaymentRequestViewSet, AdminMetricsView,
-    AdminUserListView, AdminUnpaidUsersView, TaxTypeViewSet, TaxAccountViewSet
+    AdminUserListView, AdminUserDeleteView, AdminUserStatusUpdateView,
+    AdminUnpaidUsersView, TaxTypeViewSet, TaxAccountViewSet
 )
 
 router = DefaultRouter()
@@ -30,6 +31,8 @@ urlpatterns = [
     # Admin endpoints
     path('admin/metrics/', AdminMetricsView.as_view(), name='admin_metrics'),
     path('admin/users/', AdminUserListView.as_view(), name='admin_users'),
+    path('admin/users/<int:pk>/delete/', AdminUserDeleteView.as_view(), name='admin_user_delete'),
+    path('admin/users/<int:pk>/status/', AdminUserStatusUpdateView.as_view(), name='admin_user_status'),
     path('admin/unpaid-users/', AdminUnpaidUsersView.as_view(), name='admin_unpaid_users'),
     
     # Include router URLs

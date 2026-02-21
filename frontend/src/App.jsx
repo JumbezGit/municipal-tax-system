@@ -8,6 +8,8 @@ import TaxSummary from './pages/TaxSummary'
 import UserProfile from './pages/UserProfile'
 import Payment from './pages/Payment'
 import AdminDashboard from './pages/AdminDashboard'
+import UserManagement from './pages/UserManagement'
+import UnpaidUsers from './pages/UnpaidUsers'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -45,9 +47,21 @@ function App() {
                 </ProtectedRoute>
               } />
               
-              <Route path="/admin" element={
+<Route path="/admin" element={
                 <ProtectedRoute allowedRoles={['Administrator']}>
                   <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/users" element={
+                <ProtectedRoute allowedRoles={['Administrator']}>
+                  <UserManagement />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/unpaid" element={
+                <ProtectedRoute allowedRoles={['Administrator']}>
+                  <UnpaidUsers />
                 </ProtectedRoute>
               } />
               

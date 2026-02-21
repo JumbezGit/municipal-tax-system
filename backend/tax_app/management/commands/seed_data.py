@@ -26,13 +26,13 @@ class Command(BaseCommand):
         else:
             self.stdout.write('Admin user already exists')
         
-        # Create tax types
+        # Create tax types with default_amount so new accounts get auto-assigned tax due
         tax_types_data = [
-            {'name': 'Property Tax', 'description': 'Annual property tax for residential and commercial properties'},
-            {'name': 'Business License', 'description': 'Annual business license fee'},
-            {'name': 'Service Levy', 'description': 'Service levy for municipal services'},
-            {'name': 'Market Fees', 'description': 'Fees for market stalls and trading'},
-            {'name': 'Parking Fees', 'description': 'Parking fees for municipal parking lots'},
+            {'name': 'Property Tax', 'description': 'Annual property tax for residential and commercial properties', 'default_amount': 500000.00},
+            {'name': 'Business License', 'description': 'Annual business license fee', 'default_amount': 250000.00},
+            {'name': 'Service Levy', 'description': 'Service levy for municipal services', 'default_amount': 150000.00},
+            {'name': 'Market Fees', 'description': 'Fees for market stalls and trading', 'default_amount': 100000.00},
+            {'name': 'Parking Fees', 'description': 'Parking fees for municipal parking lots', 'default_amount': 50000.00},
         ]
         
         for tax_type_data in tax_types_data:
@@ -41,7 +41,13 @@ class Command(BaseCommand):
                 defaults=tax_type_data
             )
             if created:
-                self.stdout.write(self.style.SUCCESS(f'Created tax type: {tax_type.name}'))
+                self.stdout.write(self.style.SUCCESS(
+                    f'Created tax type: {tax_type.name} (default amount: {tax_type.default_amount:,.0f} TZS)'
+                ))
+            else:
+                # Update default_amount on existing records so they reflect the seeded values
+                TaxType.objects.filter(pk=tax_type.pk).update(default_amount=tax_type_data['default_amount'])
+                self.stdout.write(f'Tax type already exists (updated default_amount): {tax_type.name}')
         
         # Create demo taxpayer
         if not User.objects.filter(email='taxpayer@example.com').exists():

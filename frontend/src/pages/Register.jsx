@@ -141,13 +141,13 @@ const Register = () => {
   }
 
   return (
-    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-white py-4">
-      <div className="card border rounded-0" style={{ maxWidth: '700px', width: '100%' }}>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center py-4" style={{ backgroundColor: '#f1f1f1' }}>
+      <div className="card rounded-0 border-0" style={{ maxWidth: '800px', width: '100%' }}>
         <div className="card-body p-4">
            <div className="text-center ">
             <img src="/logo.png" alt="Logo" style={{ width: '80px', height: '75px' }} />
           </div>
-          <h4 className="text-center mb-4 display-6">Taxpayer Registration</h4>
+          <h4 className="text-center mb-3 display-6">Registration</h4>
           
           {errors.general && <div className="alert alert-danger">{errors.general}</div>}
           {success && <div className="alert alert-success">{success}</div>}
@@ -399,10 +399,12 @@ const Register = () => {
                 {errors.declaration && <div className="invalid-feedback">{errors.declaration}</div>}
               </div>
             </div>
-
-            <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+<div className='text-center'>
+<button type="submit" className="btn btn-primary rounded-0 w-50" disabled={loading}>
               {loading ? 'Registering...' : 'Register'}
             </button>
+</div>
+            
           </form>
           
           <p className="text-center mt-3 mb-0">

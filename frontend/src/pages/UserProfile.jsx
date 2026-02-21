@@ -67,13 +67,11 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="container-fluid p-3">
-      <h2 className="mb-4">Profile</h2>
+      <div className="">
+    <div className="container-fluid p-3 border border-dash rounded-0 bg-light">
+      <h2 className="fw-light">Profile</h2>
       
       {/* User Profile Section */}
-      <div className="">
-       
-        
         <div className="card-body">
           {showEditProfile ? (
             <form onSubmit={handleEditProfile}>
@@ -164,49 +162,50 @@ const UserProfile = () => {
                 </div>
               </div>
               <div className="mt-3">
-                <button type="submit" className="btn btn-success me-2">Save Changes</button>
-                <button type="button" className="btn btn-secondary" onClick={() => setShowEditProfile(false)}>Cancel</button>
+                <button type="submit" className="btn btn-success rounded-0 me-2 "> <i className="fas fa-save me-2 "></i>Save</button>
+                <button type="button" className="btn btn-danger rounded-0" onClick={() => setShowEditProfile(false)}>
+                  <i className="fas fa-times me-2 "></i>Cancel</button>
               </div>
             </form>
           ) : (
             
-            <div className="row">
+            <div className="row ">
               {editProfileError && <div className="alert alert-danger">{editProfileError}</div>}
               {editProfileSuccess && <div className="alert alert-success">{editProfileSuccess}</div>}
                <div className="my-3">
           <div className="d-flex justify-content-between align-items-center">
-            <button className="btn btn-primary" onClick={startEditProfile}>
-              <i className="fas fa-edit me-2"></i>Edit Profile
+            <button className="btn btn-secondary rounded-0" onClick={startEditProfile}>
+              <i className="fas fa-edit me-2 "></i>Edit Profile
             </button>
           </div>
         </div>
-              <div className="col-md-6 mb-3">
-                <p className="text-muted mb-1">Full Name</p>
-                <p className="fw-bold">{profile?.full_name}</p>
+              <div className="col-md-4 mb-3">
+                <p className="text-muted mb-1 fw-bold">Full Name</p>
+                <p className=" bg-transparent">{profile?.full_name}</p>
               </div>
-              <div className="col-md-6 mb-3">
-                <p className="text-muted mb-1">Email</p>
-                <p className="fw-bold">{profile?.email}</p>
+              <div className="col-md-4 mb-3">
+                <p className="text-muted mb-1 fw-bold">Email</p>
+                <p className=" bg-transparent">{profile?.email}</p>
               </div>
-              <div className="col-md-6 mb-3">
-                <p className="text-muted mb-1">NIDA Number</p>
-                <p className="fw-bold">{profile?.national_id_number}</p>
+              <div className="col-md-4 mb-3">
+                <p className="text-muted mb-1 fw-bold">NIDA Number</p>
+                <p className=" bg-transparent">{profile?.national_id_number}</p>
               </div>
-              <div className="col-md-6 mb-3">
-                <p className="text-muted mb-1">Address</p>
-                <p className="fw-bold">{profile?.ward}, {profile?.street_village}</p>
+              <div className="col-md-4 mb-3">
+                <p className="text-muted mb-1 fw-bold">Address</p>
+                <p className=" bg-transparent">{profile?.ward}, {profile?.street_village}</p>
               </div>
-              <div className="col-md-6 mb-3">
-                <p className="text-muted mb-1">Mobile Phone</p>
-                <p className="fw-bold">{profile?.mobile_phone}</p>
+              <div className="col-md-4 mb-3">
+                <p className="text-muted mb-1 fw-bold">Mobile Phone</p>
+                <p className=" bg-transparent">{profile?.mobile_phone}</p>
               </div>
-              <div className="col-md-6 mb-3">
-                <p className="text-muted mb-1">Taxpayer Type</p>
-                <p className="fw-bold">{profile?.taxpayer_type}</p>
+              <div className="col-md-4 mb-3">
+                <p className="text-muted mb-1 fw-bold">Taxpayer Type</p>
+                <p className=" bg-transparent">{profile?.taxpayer_type}</p>
               </div>
-              <div className="col-md-6 mb-3">
-                <p className="text-muted mb-1">Business Name</p>
-                <p className="fw-bold">{profile?.business_name || 'N/A'}</p>
+              <div className="col-md-4 mb-3">
+                <p className="text-muted mb-1 fw-bold">Business Name</p>
+                <p className=" bg-transparent">{profile?.business_name || 'N/A'}</p>
               </div>
             </div>
           )}

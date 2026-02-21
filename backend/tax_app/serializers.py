@@ -112,15 +112,15 @@ class TaxpayerProfileCreateSerializer(serializers.ModelSerializer):
         # Create profile
         profile = TaxpayerProfile.objects.create(user=user, **validated_data)
         
-        # Create default tax account
-        tax_type = TaxType.objects.first()
+        # Create default tax account.
+        # total_tax_due, outstanding_balance, and next_payment_due_date are
+        # automatically populated by the post_save signal in signals.py
+        # using TaxType.default_amount.
+        tax_type = TaxType.objects.filter(is_active=True).first()
         if tax_type:
             TaxAccount.objects.create(
                 user=user,
                 tax_type=tax_type,
-                total_tax_due=0,
-                paid_amount=0,
-                outstanding_balance=0
             )
         
         return profile
@@ -131,7 +131,7 @@ class TaxTypeSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = TaxType
-        fields = ['id', 'name', 'description', 'is_active']
+        fields = ['id', 'name', 'description', 'default_amount', 'is_active']
 
 
 class TaxAccountSerializer(serializers.ModelSerializer):
@@ -153,27 +153,92 @@ class TaxAccountSerializer(serializers.ModelSerializer):
 class PaymentRequestSerializer(serializers.ModelSerializer):
     """Serializer for PaymentRequest model"""
     
+    user_email = serializers.EmailField(source='user.email', read_only=True)
+    approved_by_email = serializers.EmailField(source='approved_by.email', read_only=True, allow_null=True)
+    
     class Meta:
         model = PaymentRequest
         fields = [
-            'id', 'user', 'tax_account', 'amount', 'payment_method',
+            'id', 'user', 'user_email', 'tax_account', 'amount', 'payment_method',
             'status', 'control_number', 'provider_reference',
+            'approved_by', 'approved_by_email', 'approved_at', 'rejection_reason',
             'created_at', 'updated_at', 'completed_at'
         ]
-        read_only_fields = ['id', 'status', 'control_number', 'provider_reference', 'created_at', 'updated_at', 'completed_at']
+        read_only_fields = ['id', 'status', 'control_number', 'provider_reference', 
+                          'approved_by', 'approved_at', 'rejection_reason',
+                          'created_at', 'updated_at', 'completed_at']
+
+
+class UserStatusUpdateSerializer(serializers.Serializer):
+    """Serializer for admin to update user account status"""
+
+    STATUS_CHOICES = ['Active', 'Inactive', 'Suspended']
+
+    account_status = serializers.ChoiceField(choices=STATUS_CHOICES)
+
+
+class PaymentApprovalSerializer(serializers.Serializer):
+    """Serializer for admin to approve or reject payment"""
+    
+    action = serializers.ChoiceField(choices=['approve', 'reject'])
+    rejection_reason = serializers.CharField(required=False, allow_blank=True)
+    
+    def validate(self, data):
+        if data.get('action') == 'reject' and not data.get('rejection_reason'):
+            raise serializers.ValidationError({'rejection_reason': 'Rejection reason is required when rejecting a payment.'})
+        return data
 
 
 class PaymentRequestCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating PaymentRequest"""
+    
+    tax_account = serializers.PrimaryKeyRelatedField(
+        queryset=TaxAccount.objects.all(),
+        required=False,
+        allow_null=True
+    )
+    payment_method = serializers.ChoiceField(
+        choices=PaymentRequest.METHOD_CHOICES,
+        default='Mobile Money',
+        required=False
+    )
     
     class Meta:
         model = PaymentRequest
         fields = ['amount', 'payment_method', 'tax_account']
     
     def validate(self, data):
-        if data['amount'] <= 0:
+        # Set default payment method if not provided
+        if 'payment_method' not in data:
+            data['payment_method'] = 'Mobile Money'
+        
+        # Handle empty string for tax_account
+        if 'tax_account' in data and data['tax_account'] == '':
+            data['tax_account'] = None
+        
+        if data.get('amount') and data['amount'] <= 0:
             raise serializers.ValidationError({'amount': 'Amount must be greater than 0.'})
         return data
+
+
+class PayNowSerializer(serializers.Serializer):
+    """Serializer for instant Pay Now payment"""
+    
+    amount = serializers.DecimalField(max_digits=12, decimal_places=2)
+    payment_method = serializers.ChoiceField(
+        choices=PaymentRequest.METHOD_CHOICES,
+        default='Mobile Money'
+    )
+    tax_account = serializers.PrimaryKeyRelatedField(
+        queryset=TaxAccount.objects.all(),
+        required=False,
+        allow_null=True
+    )
+    
+    def validate_amount(self, value):
+        if value <= 0:
+            raise serializers.ValidationError('Amount must be greater than 0.')
+        return value
 
 
 class LoginSerializer(serializers.Serializer):
@@ -218,3 +283,33 @@ class AdminMetricsSerializer(serializers.Serializer):
     total_revenue_collected = serializers.DecimalField(max_digits=12, decimal_places=2)
     outstanding_tax_amount = serializers.DecimalField(max_digits=12, decimal_places=2)
     overdue_accounts = serializers.IntegerField()
+
+
+class DetentionNoticeSerializer(serializers.Serializer):
+    """Serializer for individual detention notice - includes full taxpayer profile and tax details"""
+    
+    # Tax Account Basic Info
+    tax_account_id = serializers.IntegerField()
+    email = serializers.EmailField()
+    outstanding_balance = serializers.DecimalField(max_digits=12, decimal_places=2)
+    total_tax_due = serializers.DecimalField(max_digits=12, decimal_places=2)
+    paid_amount = serializers.DecimalField(max_digits=12, decimal_places=2)
+    tax_type_name = serializers.CharField()
+    status = serializers.CharField()
+    next_payment_due_date = serializers.DateField(required=False, allow_null=True)
+    
+    # Taxpayer Profile Details
+    full_name = serializers.CharField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    gender = serializers.CharField()
+    date_of_birth = serializers.DateField()
+    mobile_phone = serializers.CharField()
+    national_id_number = serializers.CharField()
+    ward = serializers.CharField()
+    street_village = serializers.CharField()
+    house_number = serializers.CharField(allow_blank=True)
+    taxpayer_type = serializers.CharField()
+    property_location = serializers.CharField()
+    business_name = serializers.CharField(allow_blank=True)
+    registration_date = serializers.DateTimeField()
